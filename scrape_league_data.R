@@ -1,8 +1,6 @@
-setwd("~/Documents/Projects/FF")
+setwd("~/FF")
 
 library(httr)
-library(XML)
-library(httpuv)
 library(rvest)
 options("httr_oob_default" = T)
 
@@ -23,7 +21,7 @@ httr::BROWSE(httr::oauth2.0_authorize_url(yahoo, myapp, scope="fspt-r"
                                           , redirect_uri = myapp$redirect_uri))
 
 #Create Token
-yahoo_token <- httr::oauth2.0_access_token(yahoo,myapp,code="n7fcu2w")
+yahoo_token <- httr::oauth2.0_access_token(yahoo,myapp,code="qzzng32")
 save(yahoo_token,file="yahoo_token.Rdata")
 
 game_key <- 380
@@ -33,10 +31,10 @@ leagueKey <- paste0(game_key,'.l.',lg_id)
 ##GetRosterData
 
 rosters <- data.frame(team_id=integer(),
-                 team_name=character(),
-                 player_id=integer(),
-                 player_name=character(),
-                 stringsAsFactors=FALSE)
+                      team_name=character(),
+                      player_id=integer(),
+                      player_name=character(),
+                      stringsAsFactors=FALSE)
 
 baseURL <- "https://fantasysports.yahooapis.com/fantasy/v2/team/"
 
@@ -56,3 +54,8 @@ for(team in 1:12) {
 }
 
 write.csv(rosters,file="rosters.csv",quote=FALSE,row.names = FALSE)
+
+##GetPlayerData
+baseURL <- "https://fantasysports.yahooapis.com/fantasy/v2/players;plyaer_keys=NULL?format=json"
+players_page <- GET(baseURL,add_headers(Authorization=paste0("Bearer ", yahoo_token$access_token)))
+players_parse <- content(players_page, as = "parsed", encoding = "utf-8")

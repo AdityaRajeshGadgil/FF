@@ -1,16 +1,16 @@
-setwd("~/Documents/Projects/FF")
+setwd("~/FF")
 
 library(ffanalytics)
 
 week = 11
 
-my_scrape <- scrape_data(src = c("Yahoo","FleaFlicker"
+my_scrape <- scrape_data(src = c("Yahoo"
                                  ,"NFL"
                                  ,"CBS", "ESPN", "FFToday", "FantasySharks"
-                                 #,"FantasyPros", "NumberFire"
-                                 ), 
-                         pos = c("QB", "RB", "WR", "TE", "DST", "K"),
-                         season = 2018, week = week)
+                                 ,"FantasyPros", "NumberFire","FleaFlicker"
+), 
+pos = c("QB", "RB", "WR", "TE", "DST", "K"),
+season = 2018, week = week)
 
 scoring_settings <- list(
   pass = list(
@@ -60,6 +60,8 @@ scoring_settings <- list(
   )
 )
 
+my_scrape$K[grep("Badgley", my_scrape$K$player), ]$id <- 13980
+
 #players <- data.frame(player_table$id,paste(player_table$first_name,player_table$last_name))
 players_qb <- data.frame(subset(my_scrape$QB,data_src=="Yahoo")$id,subset(my_scrape$QB,data_src=="Yahoo")$src_id,subset(my_scrape$QB,data_src=="Yahoo")$player)
 colnames(players_qb) <- c("id","src_id","name")
@@ -78,6 +80,7 @@ for(i in 1:nrow(scrape_dst))  {
     scrape_dst[i,]$src_id <- paste0('1000',scrape_dst[i,]$src_id)
   }
 }
+
 players_dst <- data.frame(scrape_dst$id,scrape_dst$src_id,scrape_dst$player)
 colnames(players_dst) <- c("id","src_id","name")
 players_k <- data.frame(subset(my_scrape$K,data_src=="Yahoo")$id,subset(my_scrape$K,data_src=="Yahoo")$src_id,subset(my_scrape$K,data_src=="Yahoo")$player)
